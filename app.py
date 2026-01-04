@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from scipy.signal import butter, filtfilt, find_peaks, welch
+from urllib.parse import quote
 
 st.set_page_config(layout="wide")
 st.title("Kävely- ja juoksuanalyysi (Phyphox)")
@@ -10,7 +11,8 @@ st.title("Kävely- ja juoksuanalyysi (Phyphox)")
 # Data
 
 def raw_url(filename):
-    return f"https://raw.githubusercontent.com/t3homi01/Loppufysiikka/main/{filename}"
+    safe = quote(filename)  
+    return f"https://raw.githubusercontent.com/t3homi01/Loppufysiikka/main/{safe}"
 
 try:
     acc = pd.read_csv("Linear Accelerometer.csv")
@@ -48,7 +50,6 @@ f_dom = f[mask][np.argmax(pxx[mask])]
 duration = t[-1] - t[0]
 steps_fft = int(f_dom * duration)
 
-
 #GPS DATA
 
 def hav(lat1, lon1, lat2, lon2):
@@ -70,7 +71,6 @@ v_avg = dist / time_tot
 
 step_len = dist / steps_time
 
-
 #Testien tulokset
 c1, c2, c3, c4, c5 = st.columns(5)
 c1.metric("Askelmäärä (suodatettu)", steps_time)
@@ -78,7 +78,6 @@ c2.metric("Askelmäärä (Fourier)", steps_fft)
 c3.metric("Keskinopeus (m/s)", f"{v_avg:.2f}")
 c4.metric("Matka (m)", f"{dist:.1f}")
 c5.metric("Askelpituus (m)", f"{step_len:.2f}")
-
 
 #Kuvaajat datasta
 st.subheader("Suodatettu kiihtyvyys")
